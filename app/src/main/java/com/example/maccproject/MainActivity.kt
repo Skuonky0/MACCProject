@@ -1,9 +1,14 @@
 package com.example.maccproject
 
+import android.annotation.SuppressLint
 import android.os.Bundle
+import android.view.View
 import android.view.Window
 import android.view.WindowManager
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+
+var initialTilt = 0f
 
 class MainActivity : AppCompatActivity() {
 

@@ -52,7 +52,7 @@ class LoginFragment : Fragment() {
         activity?.findViewById<com.google.android.gms.common.SignInButton>(R.id.sign_in_button)?.setOnClickListener {
             activity?.findViewById<TextView>(R.id.loading)?.visibility = View.VISIBLE
             activity?.findViewById<com.google.android.gms.common.SignInButton>(R.id.sign_in_button)?.visibility = View.GONE
-            NavHostFragment.findNavController(this).navigate(R.id.gameFragment)
+            NavHostFragment.findNavController(this).navigate(R.id.gameFragment)//da togliere per il log in
             /*GlobalScope.launch {
                 val c1 = async { signIn() }
                 c1.await()

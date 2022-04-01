@@ -13,9 +13,9 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.LinearLayout
+import android.widget.Button
 import androidx.core.graphics.withMatrix
+import kotlin.math.asin
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
@@ -34,49 +34,30 @@ class GameFragment : Fragment(), SensorEventListener, View.OnTouchListener{
     var orientation = FloatArray(3)
     var gameVector = FloatArray(3)
 
-    //center of the wheel in the image
-    val wheelx=160f
-    val wheely=390f
-
-    //diagonal of the cannon bitmap
-    var diagonal = 0f
-
     val viewPortMatrix = Matrix()
-    val bitmapMatrix = Matrix()
 
     var screenHeight=0f
     var screenWidth=0f
     var screenAspectRatio=1f
 
-    val biasAngle = 39f //angle of the gun when the bitmap is horizontal
-
     //isFiring
     var firing = false
 
     //Position of the ball over time
-    var ballx=0f
-    var bally=0f
+    var ballx=500f
+    var bally=500f
     //Velocity of the ball over time
     var vx =0f
-    var vy= 0f
-
-    //Initial velocity of the ball
-    var px=0f
-    var py=0f
-
-    //Scaling parameter for the initial velocity
-    val mpp = 0.05f //
+    var vy= 5f
 
     val realtime=1f //ratio between simulation time and real time
 
-    var mass = 0.28f
+    var mass = 0.08f
     var gravity = mass*9.82f //2.82f //m^2/s
     var past=0L //previous time slot
 
     var touchX=-10f //Hide touch
     var touchY=-10f //Hide touch
-
-    var initialTilt = 0f
 
     val textPaint = Paint().apply {
         color = Color.parseColor("#AAFF0000")
@@ -93,8 +74,6 @@ class GameFragment : Fragment(), SensorEventListener, View.OnTouchListener{
         strokeWidth = 5f
         style= Paint.Style.STROKE
     }
-
-    lateinit var cannon : Bitmap
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -131,25 +110,17 @@ class GameFragment : Fragment(), SensorEventListener, View.OnTouchListener{
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        cannon  =
-            BitmapFactory.decodeStream(
-                getContext()?.assets?.open("cannon2.png")
-            )
-
-        diagonal = (cannon.width* Math.sqrt(2.0)).toFloat()
-
         gameView.setOnTouchListener(this)
         viewPortMatrix.apply {
             setScale(1f,-1f)
             postTranslate(0f,screenHeight)
         }
-        bitmapMatrix.apply {
-            setScale(0.5f,0.5f)
-            postTranslate(0f,screenHeight-cannon.height/2f)
-        }
 
         val displayMetrics = DisplayMetrics()
         this.activity?.windowManager?.defaultDisplay?.getMetrics(displayMetrics)
+        this.activity?.findViewById<Button>(R.id.calibrate)?.setOnClickListener {
+            initialTilt = orientation[1]
+        }
     }
 
     override fun onSensorChanged(event: SensorEvent?) {
@@ -173,30 +144,15 @@ class GameFragment : Fragment(), SensorEventListener, View.OnTouchListener{
             MotionEvent.ACTION_DOWN,
             MotionEvent.ACTION_MOVE -> {
                 if (!firing) { //Cannon is not firing..
-
                     touchX = event.x
                     touchY = event.y //coordinate of the touch event
-
-                    //Set the new initial velocity components
-                    vx=touchX
-                    vy=screenHeight-touchY
-                    vy*=mpp
-                    vx*=mpp
-                    px=vx
-                    py=vy
                     gameView.invalidate()
                 }
             }
 
             MotionEvent.ACTION_UP -> {
-                if (firing) return true
-                firing = true
-                //Calculate the initial position of the ball
-                val angle=(atan2(py,px))
-                ballx=diagonal* cos(angle) /2f
-                bally=diagonal* sin(angle) /2f
-
-                past=System.currentTimeMillis()
+                ballx = touchX
+                bally = touchY
                 gameView.invalidate()
             }
         }
@@ -205,60 +161,54 @@ class GameFragment : Fragment(), SensorEventListener, View.OnTouchListener{
 
     inner class GameView(context: Context?) : View(context) {
 
-        val cannon  =
-            BitmapFactory.decodeStream(
-                getContext().assets.open("cannon2.png")
-            )
-
         override fun onDraw(canvas: Canvas) {
             super.onDraw(canvas)
             var tilt = 0f
-            //if(initialTilt == 0f) initialTilt = orientation[1]
+            if(initialTilt == 0f) initialTilt = orientation[1]
             if(orientation[1]<initialTilt-0.1f) tilt = initialTilt-0.1f
             else if(orientation[1]>initialTilt+0.1f) tilt = initialTilt+0.1f
             else tilt = orientation[1]
+            var displ = asin(tilt-initialTilt)
+            if(displ>1) displ = 0.1f
+            else if(displ<-1) displ = -0.1f
+            vx = displ*100f
 
             with(canvas){
                 drawText(""+orientation[0], 10f, 50f,textPaint)
-                drawText(""+orientation[1], 10f, 100f,textPaint)//questo
+                drawText(""+orientation[1], 10f, 100f,textPaint)
                 drawText(""+orientation[2], 10f, 150f,textPaint)
-                drawText(""+tilt, 10f, 200f,textPaint)
+                drawText(""+(displ), 10f, 200f,textPaint)
                 drawText(""+initialTilt, 10f, 250f,textPaint)
 
-
+                drawText(""+ballx, 10f, 350f,textPaint)
+                drawText(""+bally, 10f, 400f,textPaint)
+                drawText(""+vx, 10f, 450f,textPaint)
+                drawText(""+vy, 10f, 500f,textPaint)
 
                 withMatrix(viewPortMatrix) {
                     drawLine(0f,0f,vx,vy,cannonPaint)
                 }
 
-                withMatrix(bitmapMatrix) {
-                    withMatrix(Matrix().apply {
-                        setRotate(biasAngle-(180/ Math.PI* atan2(py,px)).toFloat(),wheelx,wheely)
-                    })
-                    {
-                        drawBitmap(cannon,0f,0f,null)
-                    }
+                val now= System.currentTimeMillis() //Current time
+                withMatrix(viewPortMatrix) {
+                    drawCircle(ballx,bally,20f,cannonPaint)
+                    drawLine(ballx,bally,ballx+3*vx,bally,testPaint)
+                    drawLine(ballx,bally,ballx,bally+3*vy,testPaint)
                 }
 
-                if (firing){
-                    val now= System.currentTimeMillis() //Current time
-                    val dt = now-past //Time elapsed from the last onDraw()
-                    ballx+=vx*dt/(realtime*1000)
-                    bally+=vy*dt/(realtime*1000)
-                    vy-=gravity*dt/(realtime*1000) //vertical component decreases over time..
-                    withMatrix(viewPortMatrix) {
-                        drawCircle(ballx,bally,20f,cannonPaint)
-                        drawLine(ballx,bally,ballx+3*vx,bally,testPaint)
-                        drawLine(ballx,bally,ballx,bally+3*vy,testPaint)
-                    }
-                    if (
-                        (ballx>screenWidth) or
-                        (bally>screenHeight) or
-                        (ballx<0) or
-                        (bally<0)
-                    ) {
-                        firing = false
-                    }
+                gravity=-0.2f
+                vy+=gravity
+                if(vy > 20f) vy = 20f
+                if(vy < -20f) vy = -20f
+                ballx+=vx
+                bally+=vy
+
+                if(ballx>screenWidth) ballx = screenWidth
+                else if(ballx<0) ballx = 0f
+                //if(bally>screenHeight) bally = screenHeight
+                if(bally<0){
+                    vy = 20f
+                    bally = 1f
                 }
                 invalidate()
             }
