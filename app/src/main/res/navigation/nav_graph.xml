@@ -15,4 +15,9 @@
         android:name="com.example.maccproject.LoginFragment"
         android:label="fragment_login"
         tools:layout="@layout/fragment_login" />
+    <fragment
+        android:id="@+id/nicknameFragment"
+        android:name="com.example.maccproject.NicknameFragment"
+        android:label="fragment_nickname"
+        tools:layout="@layout/fragment_nickname" />
 </navigation>

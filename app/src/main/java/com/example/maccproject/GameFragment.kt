@@ -54,11 +54,14 @@ class GameFragment : Fragment(), SensorEventListener, View.OnTouchListener{
 
     var mass = 0.08f
     var gravity = mass*9.82f //2.82f //m^2/s
-    var past=0L //previous time slot
 
     var touchX=-10f //Hide touch
     var touchY=-10f //Hide touch
 
+    //Objects
+    lateinit var slabs : Array<Slabs>
+
+    //paint
     val textPaint = Paint().apply {
         color = Color.parseColor("#AAFF0000")
         strokeWidth = 30f
@@ -75,6 +78,12 @@ class GameFragment : Fragment(), SensorEventListener, View.OnTouchListener{
         style= Paint.Style.STROKE
     }
 
+    val slabPaint = Paint().apply {
+        color = Color.rgb(200,100,100)
+        strokeWidth = 20f
+        style= Paint.Style.STROKE
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         sensorManager = this.activity?.getSystemService(Context.SENSOR_SERVICE) as SensorManager
@@ -84,6 +93,7 @@ class GameFragment : Fragment(), SensorEventListener, View.OnTouchListener{
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        slabs = Array(25){Slabs(0f,0f,0f,0f)}
 
         gameView = GameView(this.context)
         gameView.keepScreenOn = true
@@ -149,7 +159,6 @@ class GameFragment : Fragment(), SensorEventListener, View.OnTouchListener{
                     gameView.invalidate()
                 }
             }
-
             MotionEvent.ACTION_UP -> {
                 ballx = touchX
                 bally = touchY
@@ -169,31 +178,30 @@ class GameFragment : Fragment(), SensorEventListener, View.OnTouchListener{
             else if(orientation[1]>initialTilt+0.1f) tilt = initialTilt+0.1f
             else tilt = orientation[1]
             var displ = asin(tilt-initialTilt)
-            if(displ>1) displ = 0.1f
-            else if(displ<-1) displ = -0.1f
+            if(displ>1) displ = 1f
+            else if(displ<-1) displ = -1f
             vx = displ*100f
 
             with(canvas){
-                drawText(""+orientation[0], 10f, 50f,textPaint)
+                //drawText(""+orientation[0], 10f, 50f,textPaint)
                 drawText(""+orientation[1], 10f, 100f,textPaint)
-                drawText(""+orientation[2], 10f, 150f,textPaint)
+                //drawText(""+orientation[2], 10f, 150f,textPaint)
                 drawText(""+(displ), 10f, 200f,textPaint)
                 drawText(""+initialTilt, 10f, 250f,textPaint)
-
                 drawText(""+ballx, 10f, 350f,textPaint)
                 drawText(""+bally, 10f, 400f,textPaint)
                 drawText(""+vx, 10f, 450f,textPaint)
                 drawText(""+vy, 10f, 500f,textPaint)
 
-                withMatrix(viewPortMatrix) {
-                    drawLine(0f,0f,vx,vy,cannonPaint)
-                }
 
-                val now= System.currentTimeMillis() //Current time
                 withMatrix(viewPortMatrix) {
                     drawCircle(ballx,bally,20f,cannonPaint)
                     drawLine(ballx,bally,ballx+3*vx,bally,testPaint)
                     drawLine(ballx,bally,ballx,bally+3*vy,testPaint)
+                }
+
+                withMatrix(viewPortMatrix) {
+                    drawLine(200f,250f,400f,250f,slabPaint)
                 }
 
                 gravity=-0.2f
@@ -210,7 +218,17 @@ class GameFragment : Fragment(), SensorEventListener, View.OnTouchListener{
                     vy = 20f
                     bally = 1f
                 }
+                //collision detection
+                collisionDetection()
                 invalidate()
+            }
+        }
+
+        fun collisionDetection(){
+
+            if(bally<260f && bally>240f && ballx>200f && ballx<400f && vy<0){
+                vy = 20f
+                bally+=2f
             }
         }
     }
