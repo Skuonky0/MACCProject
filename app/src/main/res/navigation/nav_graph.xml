@@ -25,4 +25,14 @@
         android:name="com.example.maccproject.StartFragment"
         android:label="fragment_start"
         tools:layout="@layout/fragment_start" />
+    <fragment
+        android:id="@+id/endFragment"
+        android:name="com.example.maccproject.EndFragment"
+        android:label="fragment_end"
+        tools:layout="@layout/fragment_end" />
+    <fragment
+        android:id="@+id/leaderboardFragment"
+        android:name="com.example.maccproject.LeaderboardFragment"
+        android:label="fragment_leaderboard"
+        tools:layout="@layout/fragment_leaderboard" />
 </navigation>

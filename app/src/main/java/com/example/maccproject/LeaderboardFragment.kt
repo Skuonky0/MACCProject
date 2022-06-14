@@ -1,0 +1,42 @@
+package com.example.maccproject
+
+import android.os.Bundle
+import android.util.Log
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.LinearLayout
+import android.widget.ProgressBar
+import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.*
+import org.json.JSONArray
+import org.json.JSONObject
+import java.util.zip.Inflater
+
+class LeaderboardFragment : Fragment() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val binding = inflater.inflate(R.layout.fragment_leaderboard, container, false)
+        val recycler = binding.findViewById<RecyclerView>(R.id.scroll_leader)
+
+        recycler.adapter = leaderboard?.let { LeaderboardAdapter(it) }
+        recycler.layoutManager = LinearLayoutManager(context)
+        recycler.setHasFixedSize(true)
+        return binding.rootView
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        activity?.findViewById<ProgressBar>(R.id.scoreProg)?.visibility = View.GONE
+    }
+}

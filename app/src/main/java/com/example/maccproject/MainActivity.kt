@@ -7,9 +7,11 @@ import android.view.Window
 import android.view.WindowManager
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import org.json.JSONArray
 
 var initialTilt = 0f
 var user: User? = null
+var leaderboard: LeaderboardEntry? = null
 
 class MainActivity : AppCompatActivity() {
 

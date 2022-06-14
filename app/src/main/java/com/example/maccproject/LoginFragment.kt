@@ -91,12 +91,12 @@ class LoginFragment : Fragment() {
             if(ret != null){
                 //l'user è presente nel database -> controllo del nickname
                 try {
-                    user = User(ret!!["name"] as String, ret!!["email"] as String, ret!!["googleId"] as String, ret!!["nickname"] as String?)
+                    user = User(ret!!["id"] as Int, ret!!["name"] as String, ret!!["email"] as String, ret!!["googleId"] as String, ret!!["nickname"] as String?)
                     withContext(Dispatchers.Main){
                         NavHostFragment.findNavController(frgmt).navigate(R.id.startFragment)
                     }
                 }catch (e: Exception){
-                    user = User(ret!!["name"] as String, ret!!["email"] as String, ret!!["googleId"] as String, null)
+                    user = User(ret!!["id"] as Int, ret!!["name"] as String, ret!!["email"] as String, ret!!["googleId"] as String, null)
                     withContext(Dispatchers.Main){
                         NavHostFragment.findNavController(frgmt).navigate(R.id.nicknameFragment)
                     }
@@ -112,7 +112,7 @@ class LoginFragment : Fragment() {
                 c2.await()
                 //settare l'user come quello appena loggato
                 if(ret != null){
-                    user = User(ret!!["name"] as String, ret!!["email"] as String, ret!!["googleId"] as String, null)
+                    user = User(ret!!["id"] as Int, ret!!["name"] as String, ret!!["email"] as String, ret!!["googleId"] as String, null)
                     withContext(Dispatchers.Main){
                         NavHostFragment.findNavController(frgmt).navigate(R.id.nicknameFragment)
                     }

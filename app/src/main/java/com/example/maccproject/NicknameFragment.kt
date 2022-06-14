@@ -41,7 +41,7 @@ class NicknameFragment : Fragment() {
                 }
                 c1.await()
                 if(ret != null){
-                    user = User(ret!!["name"] as String, ret!!["email"] as String, ret!!["googleId"] as String, ret!!["nickname"] as String)
+                    user = User(ret!!["id"]as Int, ret!!["name"] as String, ret!!["email"] as String, ret!!["googleId"] as String, ret!!["nickname"] as String)
                     withContext(Dispatchers.Main) {
                         NavHostFragment.findNavController(frgmt).navigate(R.id.gameFragment)
                     }
