@@ -2,14 +2,19 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/nag_graph"
+    android:id="@+id/nav_graph"
     app:startDestination="@id/loginFragment">
 
     <fragment
         android:id="@+id/gameFragment"
         android:name="com.example.maccproject.GameFragment"
         android:label="fragment_game"
-        tools:layout="@layout/fragment_game" />
+        tools:layout="@layout/fragment_game" >
+        <action
+            android:id="@+id/action_gameFragment_to_endFragment"
+            app:destination="@id/endFragment"
+            app:popUpTo="@id/startFragment" />
+    </fragment>
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.example.maccproject.LoginFragment"
@@ -29,7 +34,12 @@
         android:id="@+id/endFragment"
         android:name="com.example.maccproject.EndFragment"
         android:label="fragment_end"
-        tools:layout="@layout/fragment_end" />
+        tools:layout="@layout/fragment_end" >
+        <action
+            android:id="@+id/action_endFragment_to_leaderboardFragment"
+            app:destination="@id/leaderboardFragment"
+            app:popUpTo="@id/startFragment" />
+    </fragment>
     <fragment
         android:id="@+id/leaderboardFragment"
         android:name="com.example.maccproject.LeaderboardFragment"

@@ -8,10 +8,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.*
 import org.json.JSONArray
+import kotlin.system.exitProcess
 
 class StartFragment : Fragment() {
 
@@ -23,6 +25,9 @@ class StartFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        if(user == null){
+            exitProcess(0)
+        }
         val startView = inflater.inflate(R.layout.fragment_start, container, false)
         startView.keepScreenOn = true
         return startView
@@ -30,6 +35,7 @@ class StartFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        activity?.findViewById<TextView>(R.id.user_name)?.text = user?.nickname+"#"+user?.id
         activity?.findViewById<Button>(R.id.startButton)?.setOnClickListener {
             NavHostFragment.findNavController(this).navigate(R.id.gameFragment)
         }

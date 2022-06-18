@@ -6,10 +6,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.navigation.fragment.NavHostFragment
 import com.example.maccproject.databinding.FragmentNicknameBinding
 import kotlinx.coroutines.*
 import org.json.JSONObject
+import kotlin.system.exitProcess
 
 
 class NicknameFragment : Fragment() {
@@ -25,11 +28,16 @@ class NicknameFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        if(user != null){
+            exitProcess(0)
+        }
         _binding = FragmentNicknameBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        activity?.findViewById<ImageView>(R.id.menu)?.visibility = View.GONE
+        activity?.findViewById<TextView>(R.id.user_name)?.visibility = View.GONE
         this.activity?.findViewById<Button>(R.id.button2)?.setOnClickListener {
             val nicknm = binding.nickname.text.toString()
             val scope = CoroutineScope(Dispatchers.IO)
@@ -48,5 +56,11 @@ class NicknameFragment : Fragment() {
                 }
             }
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        activity?.findViewById<ImageView>(R.id.menu)?.visibility = View.VISIBLE
+        activity?.findViewById<TextView>(R.id.user_name)?.visibility = View.VISIBLE
     }
 }
