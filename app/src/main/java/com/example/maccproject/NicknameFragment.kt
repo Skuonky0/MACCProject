@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.navigation.fragment.NavHostFragment
 import com.example.maccproject.databinding.FragmentNicknameBinding
@@ -36,6 +37,9 @@ class NicknameFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        activity?.findViewById<LinearLayout>(R.id.menu_show)?.visibility = View.GONE
+        pause = 0
+
         activity?.findViewById<ImageView>(R.id.menu)?.visibility = View.GONE
         activity?.findViewById<TextView>(R.id.user_name)?.visibility = View.GONE
         this.activity?.findViewById<Button>(R.id.button2)?.setOnClickListener {

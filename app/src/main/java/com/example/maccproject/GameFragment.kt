@@ -15,6 +15,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.core.graphics.withMatrix
 import androidx.core.graphics.withTranslation
@@ -66,12 +67,14 @@ class GameFragment : Fragment(), SensorEventListener{
     var p = 0                   //parallax
     var p1 = 0
 
+    var ex_time = 0
+
     lateinit var spaceship: Bitmap
     lateinit var asteroid: Bitmap
     lateinit var sky: Bitmap
     lateinit var sky1: Bitmap
-    lateinit var explosion: Bitmap
     lateinit var spaceship_lives: Bitmap
+    var explosion = mutableListOf<Bitmap>()
 
     //Objects
     lateinit var slabs : Array<Slabs>
@@ -106,8 +109,12 @@ class GameFragment : Fragment(), SensorEventListener{
 
         sky = decodeStream(context?.assets?.open("sky.png"))
 
-        explosion = decodeStream(context?.assets?.open("explosion_14.png"))
-        explosion = Bitmap.createScaledBitmap(explosion, (explosion.width*0.7).toInt(), (explosion.height*0.7).toInt(), false)
+        var tmpex = decodeStream(context?.assets?.open("explosion_14.png"))
+        for(i in 0 until 46){
+            tmpex = decodeStream(context?.assets?.open("explosion_"+(i+1)+".png"))
+            tmpex = Bitmap.createScaledBitmap(tmpex, (tmpex.width*0.8).toInt(), (tmpex.height*0.8).toInt(), false)
+            explosion.add(i, tmpex)
+        }
 
         spaceship_lives = decodeStream(context?.assets?.open("spaceship.png"))
         spaceship_lives = Bitmap.createScaledBitmap(spaceship_lives, (spaceship_lives.width*0.16).toInt(), (spaceship_lives.height*0.16).toInt(), false)
@@ -120,9 +127,6 @@ class GameFragment : Fragment(), SensorEventListener{
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        if(user == null){
-            exitProcess(0)
-        }
         slabs = Array(25){Slabs(0f,0f,0f,0f)}
 
         gameView = GameView(this.context)
@@ -158,6 +162,13 @@ class GameFragment : Fragment(), SensorEventListener{
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        if(user == null){
+            exitProcess(0)
+        }
+        activity?.findViewById<LinearLayout>(R.id.menu_show)?.visibility = View.GONE
+        pause = 0
+
 
         viewPortMatrix.apply {
             setScale(1f,-1f)
@@ -219,20 +230,10 @@ class GameFragment : Fragment(), SensorEventListener{
 
                     withMatrix(viewPortMatrix) {
                         if(lives == 0){
-                            drawBitmap(explosion,ballx-(explosion.width/2),bally-(explosion.height/2),null)
+                            draw_explosion(this)
                         }
                         else{
-                            if(invTime != INV_TIME){
-                                if((invTime < INV_TIME && invTime > INV_TIME*4/5) || (invTime < INV_TIME*3/5 && invTime > INV_TIME*2/5) || (invTime < INV_TIME*1/5 && invTime >4)){
-                                    drawBitmap(spaceship,ballx-(spaceship.width/2),bally-(spaceship.height/2),transparentPaint)
-                                }
-                                else{
-                                    drawBitmap(spaceship,ballx-(spaceship.width/2),bally-(spaceship.height/2),null)
-                                }
-                            }
-                            else{
-                                drawBitmap(spaceship,ballx-(spaceship.width/2),bally-(spaceship.height/2),null)
-                            }
+                            draw_spaceship(this)
                         }
                     }
 
@@ -300,15 +301,34 @@ class GameFragment : Fragment(), SensorEventListener{
                 if(bally<enemyy[e]+110f && bally>enemyy[e]-110f && ballx>enemyx[e]-125f && ballx<enemyx[e]+125f && invTime == INV_TIME){
                     lives -= 1
                     invTime -= 1
-                    mediaPlayer.start()
+                    if(sound == 1) mediaPlayer.start()
                 }
             }
             if(lives == 0) {
                 //passare il punteggio alla schermata di fine
                 val bundle = Bundle()
                 bundle.putInt("points", points)
-                if(invTime <= INV_TIME/2) NavHostFragment.findNavController(frgmt).navigate(R.id.action_gameFragment_to_endFragment, bundle)
+                if(invTime <= 69) NavHostFragment.findNavController(frgmt).navigate(R.id.action_gameFragment_to_endFragment, bundle)
             }
+        }
+
+        private fun draw_spaceship(canv: Canvas){
+            if(invTime != INV_TIME){
+                if((invTime < INV_TIME && invTime > INV_TIME*4/5) || (invTime < INV_TIME*3/5 && invTime > INV_TIME*2/5) || (invTime < INV_TIME*1/5 && invTime >4)){
+                    canv.drawBitmap(spaceship,ballx-(spaceship.width/2),bally-(spaceship.height/2),transparentPaint)
+                }
+                else{
+                    canv.drawBitmap(spaceship,ballx-(spaceship.width/2),bally-(spaceship.height/2),null)
+                }
+            }
+            else{
+                canv.drawBitmap(spaceship,ballx-(spaceship.width/2),bally-(spaceship.height/2),null)
+            }
+        }
+
+        private fun draw_explosion(canv: Canvas){
+            canv.drawBitmap(explosion[ex_time],ballx-(explosion[ex_time].width/2),bally-(explosion[ex_time].height/2),null)
+            if(invTime%2 == 0) ex_time += 1
         }
     }
     private fun rotateBitmap(source: Bitmap, angle: Float): Bitmap {

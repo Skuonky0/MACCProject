@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.navigation.fragment.NavHostFragment
 import kotlinx.coroutines.*
@@ -23,6 +24,7 @@ class EndFragment : Fragment() {
         if(user == null){
             exitProcess(0)
         }
+
         val endView = inflater.inflate(R.layout.fragment_end, container, false)
         endView.keepScreenOn = true
 
@@ -49,6 +51,9 @@ class EndFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        this.activity?.findViewById<LinearLayout>(R.id.menu_show)?.visibility = View.GONE
+        pause = 0
+
         activity?.findViewById<TextView>(R.id.user_name)?.text = user?.nickname+"#"+user?.id
         activity?.findViewById<Button>(R.id.endbtn)?.setOnClickListener {
             NavHostFragment.findNavController(this).navigate(R.id.gameFragment)
@@ -64,7 +69,7 @@ class EndFragment : Fragment() {
                     ret = Proxy.getLeaderboard()
                 }
                 c1.await()
-                leaderboard = LeaderboardEntry(ret)
+                leaderboard = LeaderboardEntry(ret).array
                 withContext(Dispatchers.Main){
                     NavHostFragment.findNavController(frgmt).navigate(R.id.action_endFragment_to_leaderboardFragment)
                 }

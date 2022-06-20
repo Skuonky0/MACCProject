@@ -8,13 +8,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.maccproject.LeaderboardAdapter.*
 import org.json.JSONObject
 
-class LeaderboardAdapter (private val dataset: LeaderboardEntry)
+class LeaderboardAdapter (private val dataset: MutableList<JSONObject>)
     : RecyclerView.Adapter<LeaderboardViewHolder>() {
 
     class LeaderboardViewHolder(private val view: View): RecyclerView.ViewHolder(view){
+        val nickname: TextView = view.findViewById(R.id.nickname_l)
+        val points: TextView = view.findViewById(R.id.points_l)
+
         fun bindItems(entry: JSONObject){
-            val nickname: TextView = view.findViewById(R.id.nickname_l)
-            val points: TextView = view.findViewById(R.id.points_l)
             nickname.text = entry["nickname"].toString()+"#"+entry["id"].toString()
             points.text = entry["points"].toString()
         }
@@ -26,7 +27,7 @@ class LeaderboardAdapter (private val dataset: LeaderboardEntry)
     }
 
     override fun onBindViewHolder(holder: LeaderboardViewHolder, position: Int) {
-        holder.bindItems(dataset.array[position])
+        holder.bindItems(dataset[position])
     }
 
     override fun getItemCount(): Int {

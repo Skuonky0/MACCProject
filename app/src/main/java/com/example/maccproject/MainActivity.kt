@@ -11,11 +11,12 @@ import androidx.navigation.Navigation
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
+import org.json.JSONObject
 
 
 var initialTilt = 0f
 var user: User? = null
-var leaderboard: LeaderboardEntry? = null
+var leaderboard = mutableListOf<JSONObject>()
 var pause = 0
 var ingame = 0
 var mGoogleSignInClient : GoogleSignInClient? = null
@@ -74,9 +75,9 @@ class MainActivity : AppCompatActivity() {
         val switch_sound = findViewById<Switch>(R.id.mute)
         switch_sound.setOnClickListener {
             if(switch_sound.isChecked){
-                sound = 0
-            } else{
                 sound = 1
+            } else{
+                sound = 0
             }
         }
     }

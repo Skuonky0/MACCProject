@@ -1,16 +1,14 @@
 package com.example.maccproject
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.ProgressBar
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.navigation.fragment.NavHostFragment
-import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.*
 import org.json.JSONArray
 import kotlin.system.exitProcess
@@ -35,6 +33,9 @@ class StartFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        activity?.findViewById<LinearLayout>(R.id.menu_show)?.visibility = View.GONE
+        pause = 0
+
         activity?.findViewById<TextView>(R.id.user_name)?.text = user?.nickname+"#"+user?.id
         activity?.findViewById<Button>(R.id.startButton)?.setOnClickListener {
             NavHostFragment.findNavController(this).navigate(R.id.gameFragment)
@@ -50,7 +51,7 @@ class StartFragment : Fragment() {
                     ret = Proxy.getLeaderboard()
                 }
                 c1.await()
-                leaderboard = LeaderboardEntry(ret)
+                leaderboard = LeaderboardEntry(ret).array
                 withContext(Dispatchers.Main){
                     NavHostFragment.findNavController(frgmt).navigate(R.id.leaderboardFragment)
                 }

@@ -1,11 +1,9 @@
 package com.example.maccproject
 
-import android.util.Log
 import org.json.JSONArray
 import org.json.JSONObject
 
 class LeaderboardEntry(elements: JSONArray?) {
-    var size: Int = 0
     var array: MutableList<JSONObject> = mutableListOf()
 
     init {
@@ -15,7 +13,6 @@ class LeaderboardEntry(elements: JSONArray?) {
                 array.add(i,elements.getJSONObject(i))
                 i++
             }
-            size = i
         }
     }
 }
