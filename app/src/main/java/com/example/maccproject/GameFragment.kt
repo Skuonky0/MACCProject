@@ -112,7 +112,7 @@ class GameFragment : Fragment(), SensorEventListener{
         var tmpex = decodeStream(context?.assets?.open("explosion_14.png"))
         for(i in 0 until 46){
             tmpex = decodeStream(context?.assets?.open("explosion_"+(i+1)+".png"))
-            tmpex = Bitmap.createScaledBitmap(tmpex, (tmpex.width*0.8).toInt(), (tmpex.height*0.8).toInt(), false)
+            tmpex = Bitmap.createScaledBitmap(tmpex, (tmpex.width*0.85).toInt(), (tmpex.height*0.85).toInt(), false)
             explosion.add(i, tmpex)
         }
 
@@ -251,8 +251,8 @@ class GameFragment : Fragment(), SensorEventListener{
                         }
                         if(on_screen[e] == 0){
                             rnd_pos = Random.nextInt(6)
-                            enemyx[e] = rnd_pos*180f + Random.nextInt(50) + 70f
-                            enemyy[e] = 2000f + Random.nextInt(50)
+                            enemyx[e] = rnd_pos*(screenWidth/6f) + Random.nextInt(50) + 70f
+                            enemyy[e] = screenHeight + 110f + Random.nextInt(50)
                             on_screen[e] = 1
                         }
                         withMatrix(viewPortMatrix) {
@@ -298,7 +298,7 @@ class GameFragment : Fragment(), SensorEventListener{
                 mediaPlayer.seekTo(0)
             }
             for(e in enemyy.indices){
-                if(bally<enemyy[e]+110f && bally>enemyy[e]-110f && ballx>enemyx[e]-125f && ballx<enemyx[e]+125f && invTime == INV_TIME){
+                if(bally<enemyy[e]+110f && bally>enemyy[e]-110f && ballx>enemyx[e]-130f && ballx<enemyx[e]+130f && invTime == INV_TIME){
                     lives -= 1
                     invTime -= 1
                     if(sound == 1) mediaPlayer.start()

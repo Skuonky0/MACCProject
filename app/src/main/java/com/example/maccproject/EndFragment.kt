@@ -39,7 +39,7 @@ class EndFragment : Fragment() {
                 ret = user?.googleId?.let { Proxy.getUserScore(it) }
             }
             c1.await()
-            if(ret?.get("points") as Int <= points){
+            if(ret == null || ret?.get("points") as Int <= points){
                 val c2 = async {
                     ret = user?.googleId?.let { Proxy.addScore(it, points) }
                 }

@@ -29,7 +29,7 @@ class NicknameFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        if(user != null){
+        if(user?.nickname != null){
             exitProcess(0)
         }
         _binding = FragmentNicknameBinding.inflate(inflater, container, false)
@@ -55,7 +55,7 @@ class NicknameFragment : Fragment() {
                 if(ret != null){
                     user = User(ret!!["id"]as Int, ret!!["name"] as String, ret!!["email"] as String, ret!!["googleId"] as String, ret!!["nickname"] as String)
                     withContext(Dispatchers.Main) {
-                        NavHostFragment.findNavController(frgmt).navigate(R.id.gameFragment)
+                        NavHostFragment.findNavController(frgmt).navigate(R.id.startFragment)
                     }
                 }
             }
