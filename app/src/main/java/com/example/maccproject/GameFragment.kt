@@ -52,7 +52,7 @@ class GameFragment : Fragment(), SensorEventListener{
     var vy= 0f
 
     private val INV_TIME = 160
-    private val SPAWN_TIME = 600
+    private val SPAWN_TIME = 520
 
     var enemyx = arrayOf(0f, 0f, 0f, 0f, 0f, 0f, 0f)
     var enemyy = arrayOf(0f, 0f, 0f, 0f, 0f, 0f, 0f)
@@ -253,7 +253,7 @@ class GameFragment : Fragment(), SensorEventListener{
                         if(on_screen[e] == 0){
                             rnd_pos = Random.nextInt(6)
                             enemyx[e] = rnd_pos*(screenWidth/6f) + Random.nextInt(50) + 70f
-                            enemyy[e] = screenHeight + 110f + Random.nextInt(50)
+                            enemyy[e] = screenHeight + 120f + Random.nextInt(50)
                             on_screen[e] = 1
                         }
                         withMatrix(viewPortMatrix) {
