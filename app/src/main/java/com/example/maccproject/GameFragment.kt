@@ -101,11 +101,6 @@ class GameFragment : Fragment(), SensorEventListener{
         super.onCreate(savedInstanceState)
         sensorManager = this.activity?.getSystemService(Context.SENSOR_SERVICE) as SensorManager
         frgmt = this
-        spaceship = decodeStream(context?.assets?.open("spaceship.png"))
-        spaceship = Bitmap.createScaledBitmap(spaceship, (spaceship.width*0.21).toInt(), (spaceship.height*0.21).toInt(), false)
-
-        asteroid = decodeStream(context?.assets?.open("asteroid.png"))
-        asteroid = Bitmap.createScaledBitmap(asteroid, (asteroid.width*0.57).toInt(), (asteroid.height*0.57).toInt(), false)
 
         sky = decodeStream(context?.assets?.open("sky.png"))
 
@@ -140,6 +135,12 @@ class GameFragment : Fragment(), SensorEventListener{
 
         val bitmap = Bitmap.createBitmap(screenWidth.toInt(), screenHeight.toInt(), Bitmap.Config.ARGB_8888)
         canvas = Canvas(bitmap)
+
+        spaceship = decodeStream(context?.assets?.open("spaceship.png"))
+        spaceship = Bitmap.createScaledBitmap(spaceship, (spaceship.width*0.21*(screenWidth/1000f)).toInt(), (spaceship.height*0.21*(screenWidth/1000f)).toInt(), false)
+
+        asteroid = decodeStream(context?.assets?.open("asteroid.png"))
+        asteroid = Bitmap.createScaledBitmap(asteroid, (asteroid.width*0.57*(screenWidth/1000f)).toInt(), (asteroid.height*0.57*(screenWidth/1000f)).toInt(), false)
 
         return gameView
     }
@@ -298,7 +299,8 @@ class GameFragment : Fragment(), SensorEventListener{
                 mediaPlayer.seekTo(0)
             }
             for(e in enemyy.indices){
-                if(bally<enemyy[e]+110f && bally>enemyy[e]-110f && ballx>enemyx[e]-130f && ballx<enemyx[e]+130f && invTime == INV_TIME){
+                if(bally<enemyy[e]+110f+(screenWidth/1000) && bally>enemyy[e]-110f-(screenWidth/1000) &&
+                        ballx>enemyx[e]-129f-(screenWidth/1000) && ballx<enemyx[e]+129f+(screenWidth/1000) && invTime == INV_TIME){
                     lives -= 1
                     invTime -= 1
                     if(sound == 1) mediaPlayer.start()
