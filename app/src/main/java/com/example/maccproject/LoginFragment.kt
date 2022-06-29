@@ -68,8 +68,7 @@ class LoginFragment : Fragment() {
             activity?.findViewById<ProgressBar>(R.id.loading)?.visibility = View.VISIBLE
             activity?.findViewById<com.google.android.gms.common.SignInButton>(R.id.sign_in_button)?.visibility = View.GONE
 
-            val scope = CoroutineScope(Dispatchers.Main)
-            scope.launch {
+            GlobalScope.launch(Dispatchers.Main) {
                 val c1 = async { signIn() }
                 c1.await()
             }
@@ -97,8 +96,8 @@ class LoginFragment : Fragment() {
     }
 
     fun authCheck(frgmt: LoginFragment, acc: GoogleSignInAccount){
-        val scope = CoroutineScope(Dispatchers.IO)
-        scope.launch {
+
+        GlobalScope.launch(Dispatchers.IO) {
             var ret:JSONObject? = null
             val c1 = async {
                 ret = acc.id?.let { Proxy.getUserData(it) }

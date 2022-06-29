@@ -44,9 +44,9 @@ class NicknameFragment : Fragment() {
         activity?.findViewById<TextView>(R.id.user_name)?.visibility = View.GONE
         this.activity?.findViewById<Button>(R.id.button2)?.setOnClickListener {
             val nicknm = binding.nickname.text.toString()
-            val scope = CoroutineScope(Dispatchers.IO)
             val frgmt = this
-            scope.launch {
+
+            GlobalScope.launch(Dispatchers.IO) {
                 var ret: JSONObject? = null
                 val c1 = async {
                     ret = user?.googleId?.let { Proxy.addNickname(it, nicknm) }

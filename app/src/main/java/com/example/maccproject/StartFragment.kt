@@ -44,8 +44,7 @@ class StartFragment : Fragment() {
         activity?.findViewById<Button>(R.id.leaderb_btn)?.setOnClickListener {
             val frgmt = this
 
-            val scope = CoroutineScope(Dispatchers.IO)
-            scope.launch {
+            GlobalScope.launch(Dispatchers.IO) {
                 var ret: JSONArray? = null
                 val c1 = async {
                     ret = Proxy.getLeaderboard()
